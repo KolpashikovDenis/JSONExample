@@ -81,8 +81,16 @@ public class JSONAdapter {
 							group.add(childEmployee);
 							
 						} else { // Данная должность уже присутствует в списке, тогда....
+							// ищем в специальностях индекс должности
 							int index = groupSpecialty.indexOf(s);
+							childEmployee = group.get(index); // получаем его из group
 							
+							s = (String)jsonArr.getJSONObject(i).getString(JSON_FNAME) + 
+									" " + jsonArr.getJSONObject(i).getString(JSON_LNAME);
+							hMap = new HashMap<String, String>();
+							hMap.put(JSON_FNAME, s);
+							childEmployee.add(hMap);
+							group.add(index, childEmployee);
 						}
 					} // for(int j = 0;.....
 				}
