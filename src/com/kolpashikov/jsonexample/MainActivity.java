@@ -41,8 +41,6 @@ public class MainActivity extends Activity {
 		ja = new JSONAdapter(this);
 		adapter = ja.getAdapter();
 		elView.setAdapter(adapter);
-		 
-		elView.setAdapter(adapter);
 		
 		elView.setOnChildClickListener(new OnChildClickListener(){
 
@@ -59,10 +57,6 @@ public class MainActivity extends Activity {
 					int groupPosition, long id) {
 				Log.d(LOG, "onGroupClick groupPosition = " + groupPosition
 						+ " id = " + id);
-				// блокируем дальнейшую обработку события для группы с позицией
-				// 1
-				if (groupPosition == 1)
-					return true;
 
 				return false;
 			}
@@ -81,9 +75,6 @@ public class MainActivity extends Activity {
 //				tvInfo.setText("Равзвернули " + ah.getGroupText(groupPosition));
 			}
 		});
-
-		// разворачиваем группу с позицией 2
-		elView.expandGroup(2);
 
 	}
 
