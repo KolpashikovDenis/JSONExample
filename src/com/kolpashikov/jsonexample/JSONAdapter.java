@@ -46,8 +46,10 @@ public class JSONAdapter {
 	SimpleExpandableListAdapter getAdapter(){
 		JSONObject jsonObj;
 		JSONArray jsonArr;
-		
+		aMngr = context.getAssets();
+		sb = new StringBuilder();
 		try{
+			Log.d(LOG, "opening testTask.json");
 			InputStreamReader istream = new InputStreamReader(aMngr.open("testTask.json"));
 			BufferedReader br = new BufferedReader(istream);
 			String line;
@@ -58,39 +60,48 @@ public class JSONAdapter {
 			br.close();	
 			try{
 				group = new ArrayList<ArrayList<Map<String, String>>>();
-				groupSpecialty = new ArrayList<Map<String, String>>(); // Этот список попадет в 
+				groupSpecialty = new ArrayList<Map<String, String>>(); // Р­С‚РѕС‚ СЃРїРёСЃРѕРє РїРѕРїР°РґРµС‚ РІ 
 																	   // ExpandableListView
+				// РџРѕР»СѓС‡РёР»Рё СЃР°Рј РѕР±СЉРµРєС‚ JSON
 				jsonObj = new JSONObject(sb.toString());
+				// Р”Р°Р»РµРµ, РІ РЅРµРј РµСЃС‚СЊ РјР°СЃСЃРёРІ СЃ РёРјРµРЅРµРј "response"
 				jsonArr = jsonObj.getJSONArray("response");
-				for(int i = 0; i<jsonArr.length(); i++){
-					JSONArray job = jsonArr.getJSONObject(i).getJSONArray("specialty");
-					for(int j = 0; j < job.length(); j++){	
-						String s = (String)job.getJSONObject(j).get("name");
-						if(!groupSpecialty.contains(s)){ // Данного названия должности еще нет в списке
-							hMap = new HashMap<String, String>(); 
-							hMap.put(JSON_NAME, s); 
-							groupSpecialty.add(hMap); // Создали запись о должности
+				// Р—Р°С‚РµРј РїРµСЂРµР±РёСЂР°РµРј РєР°Р¶РґС‹Р№ СЌР»РµРјРµРЅС‚ РјР°СЃСЃРёРІР° "response"
+				int len = jsonArr.length();
+				for(int i = 0; i<len; i++){
+					JSONObject tmpSubObj = jsonArr.getJSONObject(i); // РЎСѓР±РѕР±СЉРµРєС‚ СЃ РёРјРµРЅРµРј, С„Р°РјРёР»РёРµР№ Рё С‚.Рґ.
+					JSONArray tmpSubArr = tmpSubObj.getJSONArray("specialty");// Р—РґРµСЃСЊ РїРѕР»СѓС‡Р°СЋ СЃСѓР±РјР°СЃСЃРёРІ
+					for(int j = 0; j < tmpSubArr.length(); j++){	
+						String s = (String)tmpSubArr.getJSONObject(j).get("name"); // tmpSubSubObj = tmpSubArr.get...(j)
+						hMap = new HashMap<String, String>();
+						hMap.put(JSON_NAME, s);
+						if( !groupSpecialty.contains(hMap) ){ // Р”Р°РЅРЅРѕРіРѕ РЅР°Р·РІР°РЅРёСЏ РґРѕР»Р¶РЅРѕСЃС‚Рё РµС‰Рµ РЅРµС‚ РІ СЃРїРёСЃРєРµ
+//							
+//							hMap = new HashMap<String, String>(); 
+//							hMap.put(JSON_NAME, s); 
+  							groupSpecialty.add(hMap); // РЎРѕР·РґР°Р»Рё Р·Р°РїРёСЃСЊ Рѕ РґРѕР»Р¶РЅРѕСЃС‚Рё
 							
-							// Теперь заполняем данные о фамилиях которые работают в данной должности
+							// РўРµРїРµСЂСЊ Р·Р°РїРѕР»РЅСЏРµРј РґР°РЅРЅС‹Рµ Рѕ С„Р°РјРёР»РёСЏС… РєРѕС‚РѕСЂС‹Рµ СЂР°Р±РѕС‚Р°СЋС‚ РІ РґР°РЅРЅРѕР№ РґРѕР»Р¶РЅРѕСЃС‚Рё
 							childEmployee = new ArrayList<Map<String, String>>();
 							hMap = new HashMap<String, String>();
 							s = jsonArr.getJSONObject(i).getString(JSON_FNAME) + 
 									" "+jsonArr.getJSONObject(i).getString(JSON_LNAME);
+							// TODO: Р·РґРµСЃСЏ РґРѕР±Р°РІРёС‚СЊ 
 							hMap.put(JSON_FNAME, s);
 							childEmployee.add(hMap);
 							group.add(childEmployee);
 							
-						} else { // Данная должность уже присутствует в списке, тогда....
-							// ищем в специальностях индекс должности
-							int index = groupSpecialty.indexOf(s);
-							childEmployee = group.get(index); // получаем его из group
+						} else { // Р”Р°РЅРЅР°СЏ РґРѕР»Р¶РЅРѕСЃС‚СЊ СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїРёСЃРєРµ, С‚РѕРіРґР°....
+							// РёС‰РµРј РІ СЃРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЏС… РёРЅРґРµРєСЃ РґРѕР»Р¶РЅРѕСЃС‚Рё
+							int index = groupSpecialty.indexOf(hMap);
+							childEmployee = group.get(index); // РїРѕР»СѓС‡Р°РµРј РµРіРѕ РёР· group
 							
 							s = (String)jsonArr.getJSONObject(i).getString(JSON_FNAME) + 
 									" " + jsonArr.getJSONObject(i).getString(JSON_LNAME);
 							hMap = new HashMap<String, String>();
 							hMap.put(JSON_FNAME, s);
 							childEmployee.add(hMap);
-							group.add(index, childEmployee);
+							//group.add(index, childEmployee);
 						}
 					} // for(int j = 0;.....
 				}
@@ -105,7 +116,17 @@ public class JSONAdapter {
 		}catch(IOException e){
 			String s = "IOException: " + e.getMessage();
 			Log.d(LOG, s);
-		}		
+		}	
+		String[] groupFrom = new String[]{ JSON_SPECIALTY };
+		int[] groupTo = new int[]{ android.R.id.text1 };
+		String[] childFrom = new String[]{ JSON_FNAME };
+		int[] childTo = new int[]{ android.R.id.text1 }; 
+
+		
+		adapter = new SimpleExpandableListAdapter(context, 
+				groupSpecialty, android.R.layout.simple_expandable_list_item_1, groupFrom, groupTo,
+				group, android.R.layout.simple_list_item_1, childFrom, childTo);
+		
 		return adapter;
 	}
 	

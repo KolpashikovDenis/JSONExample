@@ -1,15 +1,11 @@
 package com.kolpashikov.jsonexample;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,15 +22,13 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	final static String LOG = "mLogs";
-	
-	ExpandableListView elView;
-	AdapterHelper ah;
-	SimpleExpandableListAdapter adapter;
+		
 	TextView tvInfo;
+	ExpandableListView elView;
 	
-	StringBuffer sb = new StringBuffer();
-	JSONObject jsonObj;
-	JSONArray  jsonArr;
+	JSONAdapter ja;
+	
+	SimpleExpandableListAdapter adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +38,10 @@ public class MainActivity extends Activity {
 		tvInfo = (TextView)findViewById(R.id.tvInfo);
 		elView = (ExpandableListView)findViewById(R.id.jsonListView);
 		
-		ah = new AdapterHelper(this);
-		adapter = ah.getAdapter();
+		ja = new JSONAdapter(this);
+		adapter = ja.getAdapter();
+		elView.setAdapter(adapter);
+		 
 		elView.setAdapter(adapter);
 		
 		elView.setOnChildClickListener(new OnChildClickListener(){
@@ -53,11 +49,7 @@ public class MainActivity extends Activity {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v,
 					int groupPosition, int childPosition, long id) {
-				// TODO Auto-generated method stub
-				Log.d(LOG, "onChildClick: groupPosition-"+groupPosition+", childPosition-"
-						+childPosition+", id-"+id );
-				tvInfo.setText(ah.getGroupChildText(groupPosition, childPosition));
-				
+//				// TODO Auto-generated method stub
 				return false;
 			}			
 		});
@@ -79,14 +71,14 @@ public class MainActivity extends Activity {
 		elView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
 			public void onGroupCollapse(int groupPosition) {
 				Log.d(LOG, "onGroupCollapse groupPosition = " + groupPosition);
-				tvInfo.setText("Свернули " + ah.getGroupText(groupPosition));
+//				tvInfo.setText("Свернули " + ah.getGroupText(groupPosition));
 			}
 		});
 		
 		elView.setOnGroupExpandListener(new OnGroupExpandListener() {
 			public void onGroupExpand(int groupPosition) {
 				Log.d(LOG, "onGroupExpand groupPosition = " + groupPosition);
-				tvInfo.setText("Равзвернули " + ah.getGroupText(groupPosition));
+//				tvInfo.setText("Равзвернули " + ah.getGroupText(groupPosition));
 			}
 		});
 
@@ -105,7 +97,6 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.d(LOG, "Вызвано меню");
-		AssetManager aMngr = getApplicationContext().getAssets();
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {	
 			
