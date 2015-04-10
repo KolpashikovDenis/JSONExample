@@ -4,5 +4,10 @@
     <string name="app_name">JSON Example</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="f_name">Имя</string>
+    <string name="l_name">Фамилия</string>
+    <string name="birthday">День рождения</string>
+    <string name="specialty_id">ИД</string>
+    <string name="specialty_name">Должность</string>
 
 </resources>
